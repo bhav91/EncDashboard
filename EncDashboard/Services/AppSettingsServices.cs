@@ -1,4 +1,5 @@
 ﻿using EncDashboard.Models;
+using EncDashboard.Models.auth;
 using Newtonsoft.Json;
 
 namespace EncDashboard.Services
@@ -37,6 +38,14 @@ namespace EncDashboard.Services
 
 
             return _pipelineViews;
+        }
+
+        public void saveToken(Token token)
+        {
+            Environment.SetEnvironmentVariable("token", token.access_token, EnvironmentVariableTarget.User);
+            Environment.SetEnvironmentVariable("type", token.token_type, EnvironmentVariableTarget.User);
+            
+
         }
     }
 
