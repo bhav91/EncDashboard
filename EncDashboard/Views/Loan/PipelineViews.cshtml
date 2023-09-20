@@ -1,15 +1,20 @@
 ﻿@{
     ViewData["Title"] = "Pipeline Views";
 }
-@model List<List<EncDashboard.Models.PipelineView>>;
+@model EncDashboard.Models.Others.LoanViewModel;
 
 <form id="viewsForm" method="post" asp-controller="Loan" asp-action="filterQuery">
     @section dropdown {
         <div class="btn-group">
             <select id="views" name="selectedOption" style="background-color:white; border:0px;" onchange="handleSelectChange(this)">
-                @foreach (var item in Model)
+                <option disabled selected value="">Select View</option>
+                @foreach (var persona in Model.Personas)
                 {
-                    <option value="@item[0].name">@item[0].name</option>
+                    foreach(var pipelineView in persona.pipelineViews)
+                    {
+                        <option value="@pipelineView.name">@pipelineView.name</option>
+                    }
+                    
                 }
             </select>
         </div>
@@ -17,25 +22,9 @@
     
 </form>
 
-<div class="table-responsive">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                @foreach (var piplineView in Model)
-                {
-                    foreach (var field in piplineView)
-                    {
-                        foreach (var res in field.resultFields)
-                        {
-                            <th>@res</th>
-                        }
-                    }
-                    
-                }
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Add table rows with data here -->
-        </tbody>
-    </table>
+<div id="partialViewContainer">
 </div>
+
+<div id="loader" class="loader"></div>
+
+

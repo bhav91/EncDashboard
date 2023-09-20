@@ -1,0 +1,28 @@
+{
+  "fields": [
+    "Loan.LoanFolder",
+    "Fields.4000",
+    "Loan.LoanNumber",
+    "Loan.LoanRate",
+    "Loan.LoanAmount",
+    "Loan.LastModified",
+    "Loan.BorrowerName",
+    "Fields.745"
+  ],
+  "filter": {
+    "terms": [
+      {
+        "canonicalName": "Loan.LastModified",
+        "value": "02/25/2018",
+        "matchType": "greaterThanOrEquals",
+        "precision": "Day"
+      }
+    ]
+  },
+  "sortOrder": [
+    {
+      "canonicalName": "Loan.LastModified",
+      "order": "Descending"
+    }
+  ]
+}

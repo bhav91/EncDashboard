@@ -1,4 +1,6 @@
-using EncDashboard.Services;
+using EncDashboard.Services.ApiServices;
+using EncDashboard.Services.AppSettingServices;
+using EncDashboard.Services.Cached_Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IAppSettingsServices, AppSettingsServices>();
 builder.Services.AddScoped<IApiServices, ApiServices>();
+builder.Services.AddSingleton<ICacheService, CacheService>();   
 
 
 var app = builder.Build();

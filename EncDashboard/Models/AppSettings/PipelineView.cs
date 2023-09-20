@@ -1,4 +1,6 @@
-﻿namespace EncDashboard.Models
+﻿
+
+namespace EncDashboard.Models
 {
     public class PipelineView
     {

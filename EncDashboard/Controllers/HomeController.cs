@@ -1,5 +1,6 @@
 ﻿using EncDashboard.Models;
-using EncDashboard.Services;
+using EncDashboard.Services.ApiServices;
+using EncDashboard.Services.AppSettingServices;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Diagnostics;
@@ -20,13 +21,9 @@ namespace EncDashboard.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var token =await _apiServices.getToken();
-            _appSettingsServices.saveToken(token);
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
+            //intialization
+            await _apiServices.getToken();
+            await _apiServices.getPersonas();
             return View();
         }
 
