@@ -12,7 +12,6 @@ builder.Services.AddScoped<IAppSettingsServices, AppSettingsServices>();
 builder.Services.AddScoped<IApiServices, ApiServices>();
 builder.Services.AddSingleton<ICacheService, CacheService>();   
 
-
 var app = builder.Build();
 
 app.Use(async (context, next) =>
@@ -41,5 +40,4 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
 app.Run();

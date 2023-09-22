@@ -7,6 +7,6 @@ namespace EncDashboard.Models.Others
         public List<Persona> Personas { get; set; }  
         public List<string> Columns { get; set; }
 
-        public List<LoanRecords> LoanRecords { get; set; }
+        public List<LoanViewRecords> LoanRecords { get; set; }
     }
 }

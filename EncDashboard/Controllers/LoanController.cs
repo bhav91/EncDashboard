@@ -1,13 +1,8 @@
 ﻿using EncDashboard.Models;
-using EncDashboard.Models.auth;
 using EncDashboard.Models.Others;
-using EncDashboard.Models.UserDetails;
 using EncDashboard.Services.ApiServices;
 using EncDashboard.Services.AppSettingServices;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Newtonsoft.Json;
-using System.ComponentModel;
 
 namespace EncDashboard.Controllers
 {
@@ -53,7 +48,10 @@ namespace EncDashboard.Controllers
 
                 }
                 var records=await _apiServices.getLoanRecords();
-                _loanViewModel.LoanRecords = records;
+                if (records != null)
+                {
+                    _loanViewModel.LoanRecords = records;
+                }
             }
             catch(Exception ex)
             {

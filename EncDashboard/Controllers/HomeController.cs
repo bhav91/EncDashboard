@@ -9,19 +9,17 @@ namespace EncDashboard.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IAppSettingsServices _appSettingsServices;
         private readonly IApiServices _apiServices;
 
-        public HomeController(IAppSettingsServices appSettingsServices, IApiServices apiServices)
+        public HomeController(IApiServices apiServices)
         {
-            _appSettingsServices = appSettingsServices;
            _apiServices = apiServices;
 
         }
 
         public async Task<IActionResult> Index()
         {
-            //intialization
+            //intialization need to move somewhere
             await _apiServices.getToken();
             await _apiServices.getPersonas();
             return View();

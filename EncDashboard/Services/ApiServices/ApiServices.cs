@@ -1,13 +1,9 @@
-﻿using Azure;
-using Azure.Core;
+﻿
 using EncDashboard.Models.auth;
 using EncDashboard.Models.Loan;
 using EncDashboard.Models.UserDetails;
 using EncDashboard.Services.Cached_Service;
-using Microsoft.Graph.Models;
-using Microsoft.Kiota.Abstractions;
 using Newtonsoft.Json;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -54,6 +50,7 @@ namespace EncDashboard.Services.ApiServices
                         return token;
                     }
                 }
+                
 
             }
             catch (Exception ex)
@@ -91,7 +88,7 @@ namespace EncDashboard.Services.ApiServices
             return null;
         }
 
-        public async Task<List<LoanRecords>?> getLoanRecords()
+        public async Task<List<LoanViewRecords>?> getLoanRecords()
         {
             try
             {
@@ -104,9 +101,10 @@ namespace EncDashboard.Services.ApiServices
                 if (response.IsSuccessStatusCode)
                 {
                     var stringResponse = await response.Content.ReadAsStringAsync();
-                    var loanRecords = JsonConvert.DeserializeObject<List<LoanRecords>>(stringResponse);
+                    var loanRecords = JsonConvert.DeserializeObject<List<LoanViewRecords>>(stringResponse);
                     if(loanRecords!= null)
                     {
+                        
                         return loanRecords;
                     }
                 }
