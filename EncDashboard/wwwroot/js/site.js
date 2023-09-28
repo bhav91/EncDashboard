@@ -6,29 +6,39 @@ function handleSelectChange(select) {
         type: 'GET',
         data: { view: select.value },
         success: function (data) {
-            
-            var table = $('<table class="table"></table>');
+            hideLoader();
+            var SN = 1;
+            var table = $('<table class="table table-hover"></table>');
 
             var thead = $('<thead class="thead-dark"></thead>');
             var tr = $('<tr></tr>');
+            tr.append('<th scope="row">' + 'SN' + '</th>');
             $.each(data.columns, function (index, columnName) {
-                tr.append('<th scope="row">' + columnName + '</th>');
+                tr.append('<th scope="row">' + columnName.split(":")[1] + '</th>');
             });
             thead.append(tr);
             table.append(thead);
             var tbody = $('<tbody></tbody>');
             $.each(data.loanRecords, function (index, rowData) {
                 var row = $('<tr></tr>');
+                row.append('<td>' + SN + '</td>');
                 $.each(rowData.fields, function (key, value) {
-                    
-                    row.append('<td>' +value+ '</td>');
+                    data.columns.forEach((column) => {
+                        if (column.split(":")[0].toUpperCase() == key.toUpperCase()) {
+                            row.append('<td>' + value.split(" ")[0] + '</td>');
+                        }
+                    });
+                   
                      
-                 });
-                 tbody.append(row);
-             });
+                });
+                SN += 1;
+                tbody.append(row);
+            });
+            SN = 0;
             table.append(tbody);
              
             $('#partialViewContainer').html(table);
+            
         },
         error: function () {
             alert('An error occurred while loading the partial view.');

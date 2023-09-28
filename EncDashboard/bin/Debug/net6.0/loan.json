@@ -7,12 +7,15 @@
     "Loan.LoanAmount",
     "Loan.LastModified",
     "Loan.BorrowerName",
-    "Fields.745"
+    "Fields.745",
+    "Fields.CX.SUSPENDED.DATE",
+    "Fields.CX.PA.EXP",
+    "Log.MS.Date.Initial"
   ],
   "filter": {
     "terms": [
       {
-        "canonicalName": "Loan.LastModified",
+        "canonicalName": "Fields.CX.SUSPENDED.DATE",
         "value": "02/25/2018",
         "matchType": "greaterThanOrEquals",
         "precision": "Day"

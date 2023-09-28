@@ -1,6 +1,6 @@
-﻿namespace EncDashboard.Models.Loan
+﻿namespace EncDashboard.Models.PipelineViews
 {
-    public class LoanViewRecords
+    public class LoanRecords
     {
         public string loanId { get; set; }
         public Fields fields { get; set; }

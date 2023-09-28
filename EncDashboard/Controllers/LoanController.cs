@@ -47,7 +47,7 @@ namespace EncDashboard.Controllers
                     }
 
                 }
-                var records=await _apiServices.getLoanRecords();
+                var records=await _apiServices.getLoanRecords(_loanViewModel.Columns);
                 if (records != null)
                 {
                     _loanViewModel.LoanRecords = records;

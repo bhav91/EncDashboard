@@ -1,5 +1,5 @@
 ﻿using EncDashboard.Models.auth;
-using EncDashboard.Models.Loan;
+using EncDashboard.Models.PipelineViews;
 using EncDashboard.Models.UserDetails;
 using System.Threading.Tasks;
 
@@ -9,6 +9,6 @@ namespace EncDashboard.Services.ApiServices
     {
         Task<Token?> getToken();
         Task<UserDetails?> getPersonas();
-        Task<List<LoanViewRecords>?> getLoanRecords();
+        Task<List<LoanRecords>?> getLoanRecords(List<string> columns);
     }
 }

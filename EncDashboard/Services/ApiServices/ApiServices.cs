@@ -1,9 +1,14 @@
 ﻿
+using EncDashboard.Models;
+using EncDashboard.Models.AppSettings;
 using EncDashboard.Models.auth;
-using EncDashboard.Models.Loan;
+using EncDashboard.Models.PipelineViews;
 using EncDashboard.Models.UserDetails;
 using EncDashboard.Services.Cached_Service;
+using EncDashboard.Services.CalculationService;
+using Microsoft.Graph.Models;
 using Newtonsoft.Json;
+using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -13,15 +18,19 @@ namespace EncDashboard.Services.ApiServices
     {
         private readonly IConfiguration _configuration;
         private readonly ICacheService _cacheService;
+        private readonly ICalculateService _calculateService;
         private readonly HttpClient _httpClient;
         private readonly APIConfig _apiConfig;
+        private readonly List<CalcField> _calcFields;
 
-        public ApiServices(HttpClient httpClient, IConfiguration configuration,ICacheService cacheService)
+        public ApiServices(HttpClient httpClient, IConfiguration configuration, ICacheService cacheService,ICalculateService calculateService)
         {
             _httpClient = httpClient;
             _configuration = configuration;
             _cacheService = cacheService;
+            _calculateService = calculateService;
             _apiConfig = _configuration.GetSection("APIConfig").Get<APIConfig>();
+            _calcFields=_configuration.GetSection("CalcFields").Get<List<CalcField>>();
             _httpClient.BaseAddress = new Uri(_apiConfig.baseURL);
         }
 
@@ -51,7 +60,6 @@ namespace EncDashboard.Services.ApiServices
                     }
                 }
                 
-
             }
             catch (Exception ex)
             {
@@ -74,6 +82,8 @@ namespace EncDashboard.Services.ApiServices
                     var userDetails = JsonConvert.DeserializeObject<UserDetails>(stringResponse);
                     if (userDetails != null)
                     {
+                        //remove later
+                        userDetails.personas[0].entityName = "Loan Officer";
                         _cacheService.Remove("userDetails");
                         _cacheService.SetKey("userDetails", userDetails);
                         return userDetails;
@@ -88,7 +98,7 @@ namespace EncDashboard.Services.ApiServices
             return null;
         }
 
-        public async Task<List<LoanViewRecords>?> getLoanRecords()
+        public async Task<List<LoanRecords>?> getLoanRecords(List<string> columns)
         {
             try
             {
@@ -96,15 +106,40 @@ namespace EncDashboard.Services.ApiServices
                 var loanJson = File.ReadAllText("loan.json");
                 var content = new StringContent(loanJson, Encoding.UTF8, "application/json");
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.token_type, token.access_token);
-
+                
                 var response = await _httpClient.PostAsync("/encompass/v3/loanPipeline", content);
                 if (response.IsSuccessStatusCode)
                 {
                     var stringResponse = await response.Content.ReadAsStringAsync();
-                    var loanRecords = JsonConvert.DeserializeObject<List<LoanViewRecords>>(stringResponse);
+                    var loanRecords = JsonConvert.DeserializeObject<List<LoanRecords>>(stringResponse);
+                    
                     if(loanRecords!= null)
                     {
-                        
+                        foreach(var record in loanRecords)
+                        {
+                            var recordFieldsType = record.fields.GetType();
+                            var recordProperties = recordFieldsType.GetProperties();
+
+                            foreach (var field in recordProperties)
+                            {
+                                foreach (var calc in _calcFields.Where(calc => calc.field.Contains(field.Name)))
+                                {
+                                    foreach (var col in columns.Where(col => col.Contains(field.Name)))
+                                    {
+                                        var calculationString = calc.calc.Split('-');
+                                        var op1 = calculationString[0];
+                                        var op2 = calculationString[1];
+
+                                        var opField = recordFieldsType.GetProperty(op1 == "Today " ? op2.Split(":")[0].Trim() : op1.Split(":")[0])
+                                            .GetValue(record.fields);
+                                        var opValue = opField.ToString();
+
+                                        var calcValue = _calculateService.calculateDays(opValue);
+                                        field.SetValue(record.fields, calcValue);
+                                    }
+                                }
+                            }
+                        }
                         return loanRecords;
                     }
                 }
