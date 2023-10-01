@@ -1,0 +1,15 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/EncDashboard/obj/Release/net6.0
+/EncDashboard/.vs/EncDashboard/v17/.suo
+*.vsidx
+/EncDashboard/.vs/ProjectEvaluation/encdashboard.metadata.v7.bin
+/EncDashboard/obj/Debug/net6.0/EncDashboard.csproj.AssemblyReference.cache
+/EncDashboard/obj/Debug/net6.0/EncDashboard.csproj.FileListAbsolute.txt
+/EncDashboard/obj/Debug/net6.0/EncDashboard.GeneratedMSBuildEditorConfig.editorconfig
+/EncDashboard/.vs/ProjectEvaluation/encdashboard.projects.v7.bin
+/.vs/slnx.sqlite
+/.vs/VSWorkspaceState.json
+/.vs/EncDashboard/v17/.wsuo
