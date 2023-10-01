@@ -9,6 +9,6 @@ namespace EncDashboard.Services.ApiServices
     {
         Task<Token?> getToken();
         Task<UserDetails?> getPersonas();
-        Task<List<LoanRecords>?> getLoanRecords(List<string> columns);
+        Task<List<LoanRecords>?> getLoanRecords(List<string> columns,string view);
     }
 }

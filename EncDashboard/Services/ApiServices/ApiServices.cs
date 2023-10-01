@@ -83,7 +83,7 @@ namespace EncDashboard.Services.ApiServices
                     if (userDetails != null)
                     {
                         //remove later
-                        userDetails.personas[0].entityName = "Loan Officer";
+                        userDetails.personas[0].entityName = "Processor";
                         _cacheService.Remove("userDetails");
                         _cacheService.SetKey("userDetails", userDetails);
                         return userDetails;
@@ -98,12 +98,12 @@ namespace EncDashboard.Services.ApiServices
             return null;
         }
 
-        public async Task<List<LoanRecords>?> getLoanRecords(List<string> columns)
+        public async Task<List<LoanRecords>?> getLoanRecords(List<string> columns,string view)
         {
             try
             {
                 var token = _cacheService.Get<Token>("serviceToken");
-                var loanJson = File.ReadAllText("loan.json");
+                var loanJson = File.ReadAllText(String.Format("{0}.json",view.Replace(" ","")));
                 var content = new StringContent(loanJson, Encoding.UTF8, "application/json");
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.token_type, token.access_token);
                 
