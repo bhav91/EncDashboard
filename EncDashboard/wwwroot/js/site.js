@@ -4,7 +4,7 @@ function handleSelectChange(select) {
     $.ajax({
         url: '/Loan/filterQuery', 
         type: 'GET',
-        data: { view: select.value },
+        data: { view: select },
         success: function (data) {
             hideLoader();
             var SN = 1;

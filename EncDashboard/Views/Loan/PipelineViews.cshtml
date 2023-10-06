@@ -3,24 +3,21 @@
 }
 @model EncDashboard.Models.Others.LoanViewModel;
 
-<form id="viewsForm" method="post" asp-controller="Loan" asp-action="filterQuery">
-    @section dropdown {
-        <div class="btn-group">
-            <select id="views" name="selectedOption" style="background-color:white; border:0px;" onchange="handleSelectChange(this)">
-                <option disabled selected value="">Select View</option>
-                @foreach (var persona in Model.Personas)
-                {
-                    foreach(var pipelineView in persona.pipelineViews)
-                    {
-                        <option value="@pipelineView.name">@pipelineView.name</option>
-                    }
-                    
-                }
-            </select>
-        </div>
+@section views {
+    <ul class="navbar-nav flex-grow-2">
+        @foreach (var persona in Model.Personas)
+        {
+            @foreach (var pipelineView in persona.pipelineViews)
+            {
+
+                <li class="nav-item">
+                    <a class="nav-link text-dark" onclick="handleSelectChange('@pipelineView.name')">@pipelineView.name</a>
+                </li>
+            }
+
+        }
+    </ul>
     }
-    
-</form>
 
 <div id="partialViewContainer">
 </div>

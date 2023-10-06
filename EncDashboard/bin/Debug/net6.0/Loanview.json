@@ -1,0 +1,31 @@
+{
+  "fields": [
+    "Loan.LoanFolder",
+    "Fields.4000",
+    "Loan.LoanNumber",
+    "Loan.LoanRate",
+    "Loan.LoanAmount",
+    "Loan.LastModified",
+    "Loan.BorrowerName",
+    "Fields.745",
+    "Fields.CX.SUSPENDED.DATE",
+    "Fields.CX.PA.EXP",
+    "Log.MS.Date.Initial"
+  ],
+  "filter": {
+    "terms": [
+      {
+        "canonicalName": "Fields.CX.SUSPENDED.DATE",
+        "value": "02/25/2018",
+        "matchType": "greaterThanOrEquals",
+        "precision": "Day"
+      }
+    ]
+  },
+  "sortOrder": [
+    {
+      "canonicalName": "Loan.LastModified",
+      "order": "Descending"
+    }
+  ]
+}

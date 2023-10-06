@@ -37,3 +37,7 @@ body {
         transform: rotate(360deg);
     }
 }
+
+.nav-item:hover{
+    font-weight:700;
+}
