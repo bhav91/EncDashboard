@@ -7,8 +7,8 @@ namespace EncDashboard.Services.ApiServices
 {
     public interface IApiServices
     {
-        Task<Token?> getToken();
-        Task<UserDetails?> getPersonas();
+        Task<Token?> getToken(string username, string password);
+        Task<UserDetails?> getPersonas(string username);
         Task<List<LoanRecords>?> getLoanRecords(List<string> columns,string view);
     }
 }

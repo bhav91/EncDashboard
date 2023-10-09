@@ -17,6 +17,7 @@
             public string comments { get; set; }
             public List<UserPersona> personas { get; set; }
             public CcSite ccSite { get; set; }
-       
+            public string  error { get; set; }
+
     }
 }

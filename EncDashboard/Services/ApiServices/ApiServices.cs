@@ -34,15 +34,15 @@ namespace EncDashboard.Services.ApiServices
             _httpClient.BaseAddress = new Uri(_apiConfig.baseURL);
         }
 
-        public async Task<Token?> getToken()
+        public async Task<Token?> getToken(string username,string password)
         {
 
             try
             {
                 var requestContent = new FormUrlEncodedContent(new[] {
                      new KeyValuePair<string, string>("grant_type", "password"),
-                     new KeyValuePair<string, string>("username", _apiConfig.username),
-                     new KeyValuePair<string, string>("password", _apiConfig.password),
+                     new KeyValuePair<string, string>("username", username),
+                     new KeyValuePair<string, string>("password", password),
                      new KeyValuePair<string, string>("client_id", _apiConfig.client_id),
                      new KeyValuePair<string, string>("client_secret", _apiConfig.client_secret),
                  });
@@ -68,12 +68,12 @@ namespace EncDashboard.Services.ApiServices
             return null;
         }
 
-        public async Task<UserDetails?> getPersonas()
+        public async Task<UserDetails?> getPersonas(string username)
         {
             try
             {
                 var token=_cacheService.Get<Token>("serviceToken");
-                var username = _apiConfig.username.Split('@')[0];
+                //var username = _apiConfig.username.Split('@')[0];
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.token_type, token.access_token);
                 var response = await _httpClient.GetAsync(string.Format("/encompass/v1/company/users/{0}", username));
                 if (response.IsSuccessStatusCode)
@@ -82,8 +82,7 @@ namespace EncDashboard.Services.ApiServices
                     var userDetails = JsonConvert.DeserializeObject<UserDetails>(stringResponse);
                     if (userDetails != null)
                     {
-                        //remove later
-                        userDetails.personas[0].entityName = "Processor";
+                        
                         _cacheService.Remove("userDetails");
                         _cacheService.SetKey("userDetails", userDetails);
                         return userDetails;
@@ -93,7 +92,7 @@ namespace EncDashboard.Services.ApiServices
             }
             catch(Exception ex)
             {
-                throw new Exception(ex.ToString());
+                return new UserDetails { error = ex.Message.ToString() };
             }
             return null;
         }

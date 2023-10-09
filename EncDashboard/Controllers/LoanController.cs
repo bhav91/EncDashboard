@@ -16,7 +16,8 @@ namespace EncDashboard.Controllers
             _appSettingsServices = appSettingsServices;
             _apiServices = apiServices;
         }
-        
+
+
         public IActionResult PipelineViews()
         {
             try
