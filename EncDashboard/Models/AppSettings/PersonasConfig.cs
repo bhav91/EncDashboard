@@ -1,8 +1,4 @@
-﻿
-
-using EncDashboard.Models.AppSettings;
-
-namespace EncDashboard.Models
+﻿namespace EncDashboard.Models
 {
     public class PersonasConfig
     {

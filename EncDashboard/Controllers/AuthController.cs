@@ -1,11 +1,5 @@
-﻿using EncDashboard.Models;
-using EncDashboard.Models.auth;
-using EncDashboard.Services.ApiServices;
-using EncDashboard.Services.AppSettingServices;
+﻿using EncDashboard.Services.ApiServices;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Diagnostics;
-using System.Web.Http;
 
 namespace EncDashboard.Controllers
 {
@@ -19,7 +13,7 @@ namespace EncDashboard.Controllers
 
         }
 
-        [System.Web.Http.HttpGet]
+        [HttpGet]
         public async Task<IActionResult> getToken(string username,string password)
         {
             
@@ -35,17 +29,21 @@ namespace EncDashboard.Controllers
 
         }
 
-        [System.Web.Http.HttpGet]
-        public async Task<IActionResult> getPersonas(string username)
+        [HttpGet]
+        public async Task<IActionResult> getUserDetails(string username)
         {
-            var personas = await _apiServices.getPersonas(username);
-            if (personas == null)
+            var userDetail = await _apiServices.getUserDetails(username);
+            if (userDetail == null)
             {
-                return NotFound();
+                return NotFound(userDetail);
             }
             else
             {
-                return Ok(personas);
+                if(userDetail.error != null)
+                {
+                    return Unauthorized(userDetail.error);
+                }
+                return Ok(userDetail);
             }
         }
 

@@ -4,5 +4,6 @@
     {
         public string loanId { get; set; }
         public Fields fields { get; set; }
+
     }
 }

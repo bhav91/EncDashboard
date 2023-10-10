@@ -8,6 +8,7 @@ using EncDashboard.Services.Cached_Service;
 using EncDashboard.Services.CalculationService;
 using Microsoft.Graph.Models;
 using Newtonsoft.Json;
+using Serilog;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -46,7 +47,6 @@ namespace EncDashboard.Services.ApiServices
                      new KeyValuePair<string, string>("client_id", _apiConfig.client_id),
                      new KeyValuePair<string, string>("client_secret", _apiConfig.client_secret),
                  });
-
                 var response = await _httpClient.PostAsync("/oauth2/v1/token", requestContent);
                 if (response.IsSuccessStatusCode)
                 {
@@ -63,12 +63,12 @@ namespace EncDashboard.Services.ApiServices
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.ToString());
+                return new Token { error=ex.Message.ToString() };
             }
             return null;
         }
 
-        public async Task<UserDetails?> getPersonas(string username)
+        public async Task<UserDetails?> getUserDetails(string username)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace EncDashboard.Services.ApiServices
                     var userDetails = JsonConvert.DeserializeObject<UserDetails>(stringResponse);
                     if (userDetails != null)
                     {
-                        
+                        //userDetails.personas.Add(new UserPersona {entityName = "Under Writer" });
                         _cacheService.Remove("userDetails");
                         _cacheService.SetKey("userDetails", userDetails);
                         return userDetails;
@@ -145,7 +145,9 @@ namespace EncDashboard.Services.ApiServices
             }
             catch(Exception ex) 
             {
+                
                 throw new Exception(ex.ToString());
+                
             }
 
             return null;

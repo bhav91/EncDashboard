@@ -18,21 +18,36 @@ namespace EncDashboard.Controllers
         }
 
 
+        [HttpGet]
         public IActionResult PipelineViews()
         {
             try
             {
+                var pipelineViews = new List<string>();
                 var _matchingPersonas = _appSettingsServices.extractPersonas();
-                _loanViewModel.Personas = _matchingPersonas;
+                if(_matchingPersonas.Count != 0) 
+                {
+                    foreach(var persona in _matchingPersonas)
+                    {
+                        foreach(var pipelineView in persona.pipelineViews)
+                        {
+                            pipelineViews.Add(pipelineView.name);
+                        }
+                    }
+                    _loanViewModel.Personas = _matchingPersonas;
+                    return Ok(pipelineViews);
+                }
+                return NotFound(pipelineViews);
+                
             }
             catch(Exception ex)
             {
-                throw new Exception(ex.ToString());
+                return BadRequest(ex.Message.ToString());
             }
-            
-            return View(_loanViewModel);
         }
-        public async  Task<LoanViewModel> filterQuery(string view)
+
+        [HttpGet]
+        public async  Task<IActionResult> filterQuery(string view)
         {
             try
             {
@@ -52,13 +67,16 @@ namespace EncDashboard.Controllers
                 if (records != null)
                 {
                     _loanViewModel.LoanRecords = records;
+                    return Ok(new { _loanViewModel.Columns,_loanViewModel.LoanRecords });
                 }
+
+
             }
             catch(Exception ex)
             {
-                throw new Exception(ex.ToString());
+                return BadRequest(ex.Message.ToString());
             }
-            return _loanViewModel;
+            return NotFound();
         }
 
         
