@@ -9,6 +9,7 @@ using EncDashboard.Services.CalculationService;
 using Microsoft.Graph.Models;
 using Newtonsoft.Json;
 using Serilog;
+using Serilog.Core;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -20,12 +21,14 @@ namespace EncDashboard.Services.ApiServices
         private readonly IConfiguration _configuration;
         private readonly ICacheService _cacheService;
         private readonly ICalculateService _calculateService;
+        private readonly ILogger<ApiServices> _logger;
         private readonly HttpClient _httpClient;
         private readonly APIConfig _apiConfig;
         private readonly List<CalcField> _calcFields;
 
-        public ApiServices(HttpClient httpClient, IConfiguration configuration, ICacheService cacheService,ICalculateService calculateService)
+        public ApiServices(ILogger<ApiServices> logger,HttpClient httpClient, IConfiguration configuration, ICacheService cacheService,ICalculateService calculateService)
         {
+            _logger = logger;
             _httpClient = httpClient;
             _configuration = configuration;
             _cacheService = cacheService;
@@ -35,15 +38,15 @@ namespace EncDashboard.Services.ApiServices
             _httpClient.BaseAddress = new Uri(_apiConfig.baseURL);
         }
 
-        public async Task<Token?> getToken(string username,string password)
+        public async Task<Token?> getToken()
         {
 
             try
             {
                 var requestContent = new FormUrlEncodedContent(new[] {
                      new KeyValuePair<string, string>("grant_type", "password"),
-                     new KeyValuePair<string, string>("username", username),
-                     new KeyValuePair<string, string>("password", password),
+                     new KeyValuePair<string, string>("username", _apiConfig.username),
+                     new KeyValuePair<string, string>("password", _apiConfig.password),
                      new KeyValuePair<string, string>("client_id", _apiConfig.client_id),
                      new KeyValuePair<string, string>("client_secret", _apiConfig.client_secret),
                  });
@@ -56,6 +59,7 @@ namespace EncDashboard.Services.ApiServices
                     {
                         _cacheService.Remove("serviceToken");
                         _cacheService.SetKey("serviceToken", token);
+                        _logger.LogInformation("Token Saved In Cache");
                         return token;
                     }
                 }
@@ -63,17 +67,19 @@ namespace EncDashboard.Services.ApiServices
             }
             catch (Exception ex)
             {
-                return new Token { error=ex.Message.ToString() };
+                _logger.LogError(ex.Message.ToString());
+                throw new Exception(ex.ToString());
             }
+            _logger.LogWarning("Token Not Found");
             return null;
         }
 
-        public async Task<UserDetails?> getUserDetails(string username)
+        public async Task<UserDetails?> getUserDetails()
         {
             try
             {
                 var token=_cacheService.Get<Token>("serviceToken");
-                //var username = _apiConfig.username.Split('@')[0];
+                var username = _apiConfig.username.Split('@')[0];
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(token.token_type, token.access_token);
                 var response = await _httpClient.GetAsync(string.Format("/encompass/v1/company/users/{0}", username));
                 if (response.IsSuccessStatusCode)
@@ -82,9 +88,10 @@ namespace EncDashboard.Services.ApiServices
                     var userDetails = JsonConvert.DeserializeObject<UserDetails>(stringResponse);
                     if (userDetails != null)
                     {
-                        //userDetails.personas.Add(new UserPersona {entityName = "Under Writer" });
+                        userDetails.personas.Add(new UserPersona {entityName = "Under Writer" });
                         _cacheService.Remove("userDetails");
                         _cacheService.SetKey("userDetails", userDetails);
+                        _logger.LogInformation("User Details Saved In Cache");
                         return userDetails;
                     }
                 }
@@ -92,8 +99,11 @@ namespace EncDashboard.Services.ApiServices
             }
             catch(Exception ex)
             {
-                return new UserDetails { error = ex.Message.ToString() };
+                _logger.LogError(ex.Message.ToString());
+                throw new Exception(ex.ToString());
             }
+
+            _logger.LogWarning("User Details Not Found");
             return null;
         }
 
@@ -145,11 +155,11 @@ namespace EncDashboard.Services.ApiServices
             }
             catch(Exception ex) 
             {
-                
+                _logger.LogError(ex.Message.ToString());
                 throw new Exception(ex.ToString());
                 
             }
-
+            _logger.LogWarning("Records Not Found");
             return null;
         }
 

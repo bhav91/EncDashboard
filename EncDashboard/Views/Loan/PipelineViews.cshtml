@@ -5,14 +5,21 @@
 
 @section views {
     <ul class="navbar-nav flex-grow-2">
+        @{
+        var viewsList = new List<string>();
+    }
         @foreach (var persona in Model.Personas)
         {
             @foreach (var pipelineView in persona.pipelineViews)
             {
-
-                <li class="nav-item">
-                    <a class="nav-link text-dark" onclick="handleSelectChange('@pipelineView.name')">@pipelineView.name</a>
-                </li>
+                if (!viewsList.Contains(pipelineView.name))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" onclick="handleSelectChange('@pipelineView.name')">@pipelineView.name</a>
+                    </li>
+                    viewsList.Add(pipelineView.name);
+                }
+               
             }
 
         }

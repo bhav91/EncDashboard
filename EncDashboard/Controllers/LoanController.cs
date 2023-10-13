@@ -10,44 +10,28 @@ namespace EncDashboard.Controllers
     {
         private readonly IAppSettingsServices _appSettingsServices;
         private readonly IApiServices _apiServices;
-        private static readonly LoanViewModel _loanViewModel = new LoanViewModel() { Personas=new List<Persona>(),Columns=new List<string>() };
-        public LoanController(IAppSettingsServices appSettingsServices,IApiServices apiServices)
+        private static readonly LoanViewModel _loanViewModel = new LoanViewModel() { Personas = new List<Persona>(), Columns = new List<string>() };
+        public LoanController(IAppSettingsServices appSettingsServices, IApiServices apiServices)
         {
             _appSettingsServices = appSettingsServices;
             _apiServices = apiServices;
         }
 
-
-        [HttpGet]
         public IActionResult PipelineViews()
         {
             try
             {
-                var pipelineViews = new List<string>();
                 var _matchingPersonas = _appSettingsServices.extractPersonas();
-                if(_matchingPersonas.Count != 0) 
-                {
-                    foreach(var persona in _matchingPersonas)
-                    {
-                        foreach(var pipelineView in persona.pipelineViews)
-                        {
-                            pipelineViews.Add(pipelineView.name);
-                        }
-                    }
-                    _loanViewModel.Personas = _matchingPersonas;
-                    return Ok(pipelineViews);
-                }
-                return NotFound(pipelineViews);
-                
+                _loanViewModel.Personas = _matchingPersonas;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return BadRequest(ex.Message.ToString());
+                throw new Exception(ex.ToString());
             }
-        }
 
-        [HttpGet]
-        public async  Task<IActionResult> filterQuery(string view)
+            return View(_loanViewModel);
+        }
+        public async Task<LoanViewModel> filterQuery(string view)
         {
             try
             {
@@ -63,22 +47,19 @@ namespace EncDashboard.Controllers
                     }
 
                 }
-                var records=await _apiServices.getLoanRecords(_loanViewModel.Columns,view);
+                var records = await _apiServices.getLoanRecords(_loanViewModel.Columns, view);
                 if (records != null)
                 {
                     _loanViewModel.LoanRecords = records;
-                    return Ok(new { _loanViewModel.Columns,_loanViewModel.LoanRecords });
                 }
-
-
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return BadRequest(ex.Message.ToString());
+                throw new Exception(ex.ToString());
             }
-            return NotFound();
+            return _loanViewModel;
         }
 
-        
+
     }
 }

@@ -9,10 +9,12 @@ namespace EncDashboard.Services.AppSettingServices
     public class AppSettingsServices : IAppSettingsServices
     {
         private readonly List<Persona> _matchingPersonas = new List<Persona>();
+        private readonly ILogger<AppSettingsServices> _logger;
         private readonly ICacheService _cacheService;
 
-        public AppSettingsServices(ICacheService cacheService)
+        public AppSettingsServices(ILogger<AppSettingsServices> logger,ICacheService cacheService)
         {
+            _logger = logger;
             _cacheService = cacheService;
         }
         public List<Persona> extractPersonas()
@@ -33,14 +35,17 @@ namespace EncDashboard.Services.AppSettingServices
 
                         }
                     }
+                    _logger.LogInformation("Matching Pesonas Found");
                     return _matchingPersonas;
                 }
                 
             }
             catch (Exception ex) 
             {
+                _logger.LogError(ex.Message.ToString());
                 throw new Exception(ex.ToString());
             }
+            _logger.LogWarning("No Matching Personas");
             return _matchingPersonas;
             
         }
